@@ -105,7 +105,7 @@ public class CMPDecoder {
   public func read(_ fields: [String : Serializable.Type]) throws -> [String : Any] {
     var size: UInt32 = 0
     cmp_read_map(&context, &size)
-    let keysAndValues = try Array((0..<size)).flatMap { (_) -> (String, Serializable) in
+    let keysAndValues = try Array((0..<size)).compactMap { (_) -> (String, Serializable) in
       let key = try String(with: self)
       let value = (try fields[key]?.init(with: self))!
       return (key, value)
@@ -118,7 +118,7 @@ public class CMPDecoder {
   public func read<T : Serializable>() throws -> [String : T] {
     var size: UInt32 = 0
     cmp_read_map(&context, &size)
-    let keysAndValues = try Array((0..<size)).flatMap { (_) -> (String, T) in
+    let keysAndValues = try Array((0..<size)).compactMap { (_) -> (String, T) in
       (try String(with: self), try T(with: self))
     }
     return Dictionary<String, T>(uniqueKeysWithValues: keysAndValues)
