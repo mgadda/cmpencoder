@@ -8,4 +8,11 @@ class cmpencoderTests: XCTestCase {
     let decoder = CMPDecoder(from: encoder.buffer)
     XCTAssertEqual(try decoder.read(), "Hello, World!")
   }
+  
+  func testRoundtripArray() {
+    let encoder = CMPEncoder()
+    encoder.write([1,2,3,4])
+    let decoder = CMPDecoder(from: encoder.buffer)
+    XCTAssertEqual(try decoder.read(), [1,2,3,4])
+  }
 }

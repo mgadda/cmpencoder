@@ -17,4 +17,17 @@ Then just `import CMPEncoder` as needed.
 
 ## Usage
 
-coming soon...
+### Encoding
+```swift
+let encoder = CMPEncoder()
+encoder.write("Hello, World!")
+// Your data is now available in `encoder.buffer`
+
+```
+
+### Decoding
+```swift
+let msgPackedData: Data = ...
+let decoder = CMPDecoder(from: msgPackedData)
+let str: String = try decoder.read()
+```

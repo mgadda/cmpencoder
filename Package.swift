@@ -17,7 +17,7 @@ let package = Package(
             name: "CMPEncoder",
             dependencies: ["CMP"]),        
         .testTarget(
-            name: "cmpencoderTests",
+            name: "CMPEncoderTests",
             dependencies: ["CMPEncoder"]),
     ]
 )
