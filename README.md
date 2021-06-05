@@ -31,3 +31,33 @@ let msgPackedData: Data = ...
 let decoder = CMPDecoder(from: msgPackedData)
 let str: String = try decoder.read()
 ```
+
+### Round-trip custom type
+
+Arbitrary custom types that conform to `MsgPackSerializable` can be serialized and 
+deserialized.
+
+```swift
+struct Foo {
+  let a: Int
+  let b: String
+}
+
+extension Foo: MsgPackSerializable {
+  func serialize(encoder: CMPEncoder) {
+    encoder.write(a)
+    encoder.write(b)
+  }
+
+  init(with decoder: CMPDecoder) throws {
+    a = decoder.read()
+    b = try decoder.read()
+  }
+}
+
+let f = Foo(a: 100, b: "bar")
+let encoder = CMPEncoder()
+encoder.write(f)
+let decoder = CMPDecoder(from: encoder.buffer)
+let decodedFoo: Foo = try! decoder.read(Foo.self)
+```

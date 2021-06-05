@@ -56,9 +56,7 @@ class cmpencoderTests: XCTestCase {
   }
 
   func testRoundtripCustomType() {
-
     let f = Foo(a: 100, b: "bar")
-
     let encoder = CMPEncoder()
     encoder.write(f)
     let decoder = CMPDecoder(from: encoder.buffer)
