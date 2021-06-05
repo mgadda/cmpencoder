@@ -42,8 +42,8 @@ struct CMPJump {
 
 // TODO: why is this necessary?
 public class CMPKeyedDecoderContainer {
-  var container: [String : Serializable] = [:]
-  public func write<T: Serializable>(key: String, value: T) {
+  var container: [String : MsgPackSerializable] = [:]
+  public func write<T: MsgPackSerializable>(key: String, value: T) {
     container[key] = value
   }
 }
@@ -94,6 +94,14 @@ public class CMPEncoder {
     cmp_write_s64(&context, value)
   }
 
+  public func write(_ value: Bool) {
+    cmp_write_bool(&context, value)
+  }
+
+  public func write(_ value: Float) {
+    cmp_write_float(&context, value)
+  }
+
   public func write(_ value: Double) {
     cmp_write_double(&context, value)
   }
@@ -104,18 +112,18 @@ public class CMPEncoder {
     }
   }
 
-  public func write<T: Serializable>(_ value: T) {
+  public func write<T: MsgPackSerializable>(_ value: T) {
     value.serialize(encoder: self)
   }
 
-  public func write<T: Serializable>(_ values: [T]) {
+  public func write<T: MsgPackSerializable>(_ values: [T]) {
     cmp_write_array(&context, UInt32(values.count))
     values.forEach { value -> Void in
       value.serialize(encoder: self)
     }
   }
 
-  public func write<T: Serializable>(_ values: [String : T?]) {
+  public func write<K: MsgPackSerializable, V: MsgPackSerializable>(_ values: [K : V?]) {
     cmp_write_map(&context, UInt32(values.count))
     values.forEach { (key, value) in
       guard value != nil else { return }

@@ -54,6 +54,18 @@ public class CMPDecoder {
     return value
   }
 
+  public func read() -> Bool {
+    var value: Bool = false
+    cmp_read_bool(&context, &value)
+    return value
+  }
+
+  public func read() -> Float {
+    var value: Float = 0.0
+    cmp_read_float(&context, &value)
+    return value
+  }
+
   public func read() -> Double {
     var value: Double = 0.0
     cmp_read_double(&context, &value)
@@ -93,7 +105,7 @@ public class CMPDecoder {
   }
 
   /// Read a homoegeneous array of values
-  public func read<T : Serializable>() throws -> [T] {
+  public func read<T : MsgPackSerializable>() throws -> [T] {
     var size: UInt32 = 0
     cmp_read_array(&context, &size)
     return try Array((0..<size)).map { (_) -> T in
@@ -102,25 +114,29 @@ public class CMPDecoder {
   }
 
   /// Read heterogeneous dictionary of Serializable values
-  public func read(_ fields: [String : Serializable.Type]) throws -> [String : Any] {
+  public func read(_ fields: [String : MsgPackSerializable.Type]) throws -> [String : Any] {
     var size: UInt32 = 0
     cmp_read_map(&context, &size)
-    let keysAndValues = try Array((0..<size)).compactMap { (_) -> (String, Serializable) in
+    let keysAndValues = try Array((0..<size)).compactMap { (_) -> (String, MsgPackSerializable) in
       let key = try String(with: self)
       let value = (try fields[key]?.init(with: self))!
       return (key, value)
     }
-    return Dictionary<String, Serializable>(uniqueKeysWithValues: keysAndValues)
+    return Dictionary<String, MsgPackSerializable>(uniqueKeysWithValues: keysAndValues)
   }
 
   /// Deserialize a homogeneous map of String -> T (probably of limited utility)
   /// This method should not be confused with a type-less keyed decoding container
-  public func read<T : Serializable>() throws -> [String : T] {
+  public func read<T : MsgPackSerializable>() throws -> [String : T] {
     var size: UInt32 = 0
     cmp_read_map(&context, &size)
     let keysAndValues = try Array((0..<size)).compactMap { (_) -> (String, T) in
       (try String(with: self), try T(with: self))
     }
     return Dictionary<String, T>(uniqueKeysWithValues: keysAndValues)
+  }
+
+  public func read<T: MsgPackSerializable>(_ type: T.Type) throws -> T {
+    return try T(with: self)
   }
 }

@@ -5,7 +5,7 @@
 //
 import Foundation
 
-extension Data : Serializable {
+extension Data : MsgPackSerializable {
   public func serialize(encoder: CMPEncoder) {
     encoder.write(self)
   }
@@ -14,7 +14,7 @@ extension Data : Serializable {
   }
 }
 
-extension String : Serializable {
+extension String : MsgPackSerializable {
   public func serialize(encoder: CMPEncoder) {
     encoder.write(self)
   }
@@ -23,7 +23,26 @@ extension String : Serializable {
   }
 }
 
-extension Double : Serializable {
+extension Bool : MsgPackSerializable {
+  public func serialize(encoder: CMPEncoder) {
+    encoder.write(self)
+  }
+  public init(with decoder: CMPDecoder) throws {
+    self = try decoder.read()
+  }
+}
+
+extension Float : MsgPackSerializable {
+  public func serialize(encoder: CMPEncoder) {
+    encoder.write(self)
+  }
+  public init(with decoder: CMPDecoder) throws {
+    self = try decoder.read()
+  }
+}
+
+
+extension Double : MsgPackSerializable {
   public func serialize(encoder: CMPEncoder) {
     encoder.write(self)
   }
@@ -32,7 +51,7 @@ extension Double : Serializable {
   }
 }
 
-extension Int : Serializable {
+extension Int : MsgPackSerializable {
   public func serialize(encoder: CMPEncoder) {
     encoder.write(self)
   }
